@@ -9,6 +9,31 @@ const (
 )
 
 type Lot struct {
-	id string
-	size LotSize
+	id     string
+	size   LotSize
+	locked bool
+}
+
+type ILot interface {
+	// GetId returns the ID of the lot.
+	GetId() string
+	// Lock locks the lot.
+	Lock()
+
+	// Unlock unlocks the lot.
+	Unlock()
+
+	// IsLocked checks if the lot is locked.
+	IsLocked() bool
+
+	// GetSize returns the size of the lot.
+	GetSize() LotSize
+}
+
+func NewLot(id string, size LotSize) *Lot {
+	return &Lot{
+		id:     id,
+		size:   size,
+		locked: false,
+	}
 }

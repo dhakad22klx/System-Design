@@ -8,3 +8,19 @@ const (
 	LARGE_VEHICLE  VehicleType = "LARGE"
 )
 
+type Vehicle struct {
+	VehicleNumber string
+	Type          VehicleType
+}
+
+type IVehicle interface {
+	//ChargeVehicle charges the vehicle based on the parking fee.
+	ChargeVehicle() float64
+}
+
+func NewVehicle(vehicleNumber string, vehicleType VehicleType) *Vehicle {
+	return &Vehicle{
+		VehicleNumber: vehicleNumber,
+		Type:          vehicleType,
+	}
+}
