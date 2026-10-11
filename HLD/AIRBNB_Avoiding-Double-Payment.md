@@ -22,6 +22,8 @@ Idempotency ensures that executing the same logical operation multiple times has
 - Prevents different requests from executing the same logical business operation multiple times.
 - Example: Preventing multiple refunds for the same refund operation.
 
+**When both are needed:** If the frontend generates a new UUID on every payment-button click, the backend cannot tell from the UUID alone that the requests represent the same payment. Request-level idempotency handles retries using the same key; entity-level protection prevents requests with different keys from charging the same booking payment obligation twice. Production systems often combine both.
+
 **Key takeaway:** Request-level idempotency protects against duplicate requests, while entity-level idempotency protects against duplicate business operations.
 
 ### 2. Eventual Consistency in Distributed Systems
@@ -42,6 +44,7 @@ A centralized database storing idempotency records can become a bottleneck as pa
 
 Important considerations:
 
+- **Avoid replica databases — stick to the master for idempotency checks and writes.** Replication lag can make a replica miss an existing record and allow a duplicate payment.
 - Distribute idempotency records across partitions or shards.
 - Use appropriate indexing and unique constraints for efficient key lookups.
 - Understand the trade-offs between consistency, availability, and scalability.
