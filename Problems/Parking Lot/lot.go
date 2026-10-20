@@ -1,11 +1,11 @@
 package main
 
-type LotSize string
+type LotSize int
 
 const (
-	SMALL_LOT  LotSize = "SMALL"
-	MEDIUM_LOT LotSize = "MEDIUM"
-	LARGE_LOT  LotSize = "LARGE"
+	SMALL_LOT  LotSize = 1
+	MEDIUM_LOT LotSize = 2
+	LARGE_LOT  LotSize = 3
 )
 
 type Lot struct {
@@ -36,4 +36,24 @@ func NewLot(id string, size LotSize) *Lot {
 		size:   size,
 		locked: false,
 	}
+}
+
+func (l *Lot) GetId() string {
+	return l.id
+}
+
+func (l *Lot) Lock() {
+	l.locked = true
+}
+
+func (l *Lot) Unlock() {
+	l.locked = false
+}
+
+func (l *Lot) IsLocked() bool {
+	return l.locked
+}
+
+func (l *Lot) GetSize() LotSize {
+	return l.size
 }
