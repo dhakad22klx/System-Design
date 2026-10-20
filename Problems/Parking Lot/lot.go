@@ -1,11 +1,11 @@
 package main
 
-type LotSize string
+type LotSize int
 
 const (
-	SMALL_LOT  LotSize = "SMALL"
-	MEDIUM_LOT LotSize = "MEDIUM"
-	LARGE_LOT  LotSize = "LARGE"
+	SMALL_LOT  LotSize = 1
+	MEDIUM_LOT LotSize = 2
+	LARGE_LOT  LotSize = 3
 )
 
 type Lot struct {
