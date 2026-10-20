@@ -37,3 +37,23 @@ func NewLot(id string, size LotSize) *Lot {
 		locked: false,
 	}
 }
+
+func (l *Lot) GetId() string {
+	return l.id
+}
+
+func (l *Lot) Lock() {
+	l.locked = true
+}
+
+func (l *Lot) Unlock() {
+	l.locked = false
+}
+
+func (l *Lot) IsLocked() bool {
+	return l.locked
+}
+
+func (l *Lot) GetSize() LotSize {
+	return l.size
+}
