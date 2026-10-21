@@ -174,16 +174,6 @@ The version values are illustrative; this is a conceptual explanation, not a spe
 
 An online, transparent migration can still include brief internal request rejection. Successful retries can absorb that interruption within the application’s latency and retry budgets.
 
-### General engineering deductions
-
-- **Plan rollback before cutover:** Returning traffic requires a source that is sufficiently current, not merely an old copy that still exists.
-- **Make long jobs resumable:** Checkpoints reduce the need to restart expensive work after failures.
-- **Verify a consistent state:** Comparing two live datasets at different moments can report differences caused only by concurrent writes.
-- **Protect serving capacity:** Migration work competes with user queries unless its resource use is controlled or offloaded.
-- **Delay destructive cleanup:** Removing the source removes a potential recovery path.
-- **Separate scaling from availability:** Shards distribute work; replicas provide redundancy; migration protocols coordinate movement.
-- **Treat elasticity as safe redistribution:** Adding machines is only useful if data and workload can move onto them safely.
-
 ## 9. Takeaways to remember
 
 - A logical collection can span multiple physical locations.
