@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"math"
+	"sync"
 	"time"
 )
 
 type ParkingSystem struct {
+	mu     sync.Mutex
 	Levels []*Level
 }
 
@@ -33,10 +35,17 @@ func NewParkingSystem(levels []*Level) *ParkingSystem {
 }
 
 func (ps *ParkingSystem) AddLevel(level *Level) {
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+
 	ps.Levels = append(ps.Levels, level)
 }
 
 func (ps *ParkingSystem) ParkVehicle(vehicle *Vehicle) (string, error) {
+	// Selecting and reserving a lot must happen as one operation.
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+
 	availableLot := ps.getAvailableLot(vehicle)
 	if availableLot == nil {
 		return "", fmt.Errorf("no available lots for vehicle type: %d", vehicle.Type)
@@ -48,6 +57,9 @@ func (ps *ParkingSystem) ParkVehicle(vehicle *Vehicle) (string, error) {
 }
 
 func (ps *ParkingSystem) UnparkVehicle(vehicle *Vehicle) error {
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+
 	var lotToVacate *Lot = vehicle.AssignedLot
 	lotToVacate.Unlock()
 	return nil
@@ -58,6 +70,8 @@ func (ps *ParkingSystem) ChargeParkingFee(vehicle *Vehicle) (float64, error) {
 	var hoursParked = int(math.Ceil(vehicle.VehicleExitTime.Sub(vehicle.VehicleEntryTime).Hours()))
 	return vehicle.ChargeVehicle(hoursParked), nil
 }
+
+// getAvailableLot must be called with ps.mu held.
 func (ps *ParkingSystem) getAvailableLot(vehicle *Vehicle) *Lot {
 	var availableLot *Lot = nil
 	if vehicle.Type == SMALL_VEHICLE {
