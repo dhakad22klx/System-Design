@@ -53,6 +53,24 @@ Copying data solves only the first part. A correct migration must coordinate bot
 
 Stripe built DocDB around MongoDB Community. Its proxies route queries using a chunk metadata service; shards are replica sets. The Data Movement Platform coordinates migrations. Its CDC path carries oplog events through Kafka into object storage such as S3.
 
+### Architecture
+
+The diagram shows the application request path and the CDC pipeline:
+
+```mermaid
+flowchart TD
+    Applications["Product applications"] --> Proxies["Database proxies"]
+    Metadata["Chunk metadata service"] -. "Chunk routes and versions" .-> Proxies
+    Proxies -->|Reads and writes| Shards["DocDB shards (MongoDB replica sets)"]
+    Shards --> Oplog["MongoDB oplog (per shard)"]
+    Oplog -->|CDC events| Kafka["Kafka"]
+    Kafka -->|Archive oplog events| ObjectStorage["Cloud object storage (e.g., Amazon S3)"]
+```
+
+During migration, the async replication service reads oplog events from Kafka and object storage, then applies changes for the selected chunks to destination shards. Archiving provides change history for replay beyond the source oplog’s finite retention window. [Source: Stripe blog](https://stripe.dev/blog/how-stripes-document-databases-supported-99.999-uptime-with-zero-downtime-data-migrations)
+
+### Migration lifecycle
+
 | Migration step | What happens |
 |---|---|
 | Register | Record migration intent and build destination indexes. |
