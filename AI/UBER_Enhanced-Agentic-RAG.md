@@ -53,3 +53,12 @@ SMEs establish reference answers or feedback. New chatbot versions answer the te
 - Treat LLM-judge scores as estimates; check their agreement with expert judgment.
 - Compare changes on a consistent test set and track latency and cost alongside quality.
 - At million-document scale, design a scalable way to select catalog entries rather than putting the entire catalog into every prompt.
+
+## 7. References Linked in the Original Blog
+
+- [Genie: Uber’s Gen AI On-Call Copilot](https://www.uber.com/us/en/blog/genie-ubers-gen-ai-on-call-copilot/) — Embedding generation, indexing, and vector search pipeline referenced by the enhanced RAG blog. See also the [local Genie notes](UBER_Rag_Application.md).
+- [A Survey on LLM-as-a-Judge](https://arxiv.org/abs/2411.15594) — Background on automated response evaluation.
+- [Meet Michelangelo: Uber’s Machine Learning Platform](https://www.uber.com/us/en/blog/michelangelo-machine-learning-platform/) — Background on Uber’s ML platform.
+- [LangGraph documentation](https://docs.langchain.com/oss/python/langgraph/overview) — Framework used for agent workflow orchestration; the original documentation link now points here.
+- [Chain-of-Retrieval Augmented Generation](https://arxiv.org/abs/2501.14342) — Referenced for a possible iterative retrieval extension.
+- [Learning to Learn By Self-Critique](https://proceedings.neurips.cc/paper/2019/hash/6018df1842f7130f1b85a6f8e911b96b-Abstract.html) — Cited by the original blog when proposing a future self-critique agent.
