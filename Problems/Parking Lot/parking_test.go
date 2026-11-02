@@ -8,6 +8,52 @@ import (
 	"time"
 )
 
+func TestParkingSystemUnparkVehicle(t *testing.T) {
+	lot := NewLot("L1-1", SMALL_LOT)
+	parkingSystem := NewParkingSystem([]*Level{
+		NewLevel("1", []*Lot{lot}, nil, nil),
+	})
+	first := NewVehicle("FIRST", SMALL_VEHICLE, &feestrategy.SmallVehicleFee{})
+	second := NewVehicle("SECOND", SMALL_VEHICLE, &feestrategy.SmallVehicleFee{})
+
+	if _, err := parkingSystem.ParkVehicle(first); err != nil {
+		t.Fatal(err)
+	}
+	if err := parkingSystem.UnparkVehicle(first); err != nil {
+		t.Fatal(err)
+	}
+	if lot.IsLocked() || first.AssignedLot != nil {
+		t.Error("unparking must free the lot and clear the vehicle's assignment")
+	}
+	if ticket, err := parkingSystem.ParkVehicle(second); err != nil || ticket != lot.GetId() {
+		t.Fatalf("reusing the freed lot: ticket = %q, err = %v", ticket, err)
+	}
+	if err := parkingSystem.UnparkVehicle(first); err == nil {
+		t.Error("unparking the first vehicle again must return an error")
+	}
+	third := NewVehicle("THIRD", SMALL_VEHICLE, &feestrategy.SmallVehicleFee{})
+	if _, err := parkingSystem.ParkVehicle(third); err == nil {
+		t.Error("the second vehicle's lot must remain occupied")
+	}
+}
+
+func TestParkingSystemUnparkVehicleRejectsUnparkedVehicle(t *testing.T) {
+	parkingSystem := NewParkingSystem(nil)
+	for _, tc := range []struct {
+		name    string
+		vehicle *Vehicle
+	}{
+		{name: "nil vehicle"},
+		{name: "never parked", vehicle: NewVehicle("NEW", SMALL_VEHICLE, &feestrategy.SmallVehicleFee{})},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			if err := parkingSystem.UnparkVehicle(tc.vehicle); err == nil {
+				t.Error("unparking a vehicle without an assigned lot must return an error")
+			}
+		})
+	}
+}
+
 func TestParkingSystemParkVehicleConcurrently(t *testing.T) {
 	const (
 		levelCount      = 3

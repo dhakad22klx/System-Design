@@ -60,8 +60,11 @@ func (ps *ParkingSystem) UnparkVehicle(vehicle *Vehicle) error {
 	ps.mu.Lock()
 	defer ps.mu.Unlock()
 
-	var lotToVacate *Lot = vehicle.AssignedLot
-	lotToVacate.Unlock()
+	if vehicle == nil || vehicle.AssignedLot == nil {
+		return fmt.Errorf("vehicle is not parked")
+	}
+	vehicle.AssignedLot.Unlock()
+	vehicle.AssignedLot = nil
 	return nil
 }
 
